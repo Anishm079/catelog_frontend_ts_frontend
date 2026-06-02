@@ -1,4 +1,4 @@
-import React, { type JSX } from "react";
+import { type JSX } from "react";
 import Typography from '@mui/material/Typography';
 import { Button } from "@mui/material";
 

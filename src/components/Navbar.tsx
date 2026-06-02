@@ -16,7 +16,7 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import { logoutUser } from '../config';
 import { useUserState } from '../stores';
 
-const pages = [
+let pages = [
   { label: 'Quotes', path: '/quotes' },
   { label: 'Products', path: '/products' },
   { label: 'Features', path: '/features' },
@@ -60,6 +60,10 @@ function ResponsiveAppBar() {
   const setUserDetails = useUserState((state:any) => state.setUserDetails);
   const navigate = useNavigate();
   const location = useLocation();
+
+  if(user.role==="ANALYST"){
+    pages = pages.filter(item=>item.label==="Quotes")
+  }
 
   const handleNavigate = (path: string) => {
     navigate(path);
