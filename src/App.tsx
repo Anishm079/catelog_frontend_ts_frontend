@@ -1,20 +1,72 @@
-import { useState } from 'react'
+import { Route, Routes, Navigate } from 'react-router'
+import Login from './pages/Login'
+import QuoteById from './pages/QouteById'
+import PrivateRoute from './pages/PrivateRoute';
+import Quotes from './pages/Quotes';
+import Products from './pages/Products';
+import Features from './pages/Features';
+
+const publicRoutes = [
+  {
+    key: 'login',
+    path: 'login',
+    component: Login,
+    title: 'Login',
+  },
+  {
+    key: 'quote-by-id',
+    path: 'quote/:id',
+    component: QuoteById,
+    title: 'Quote By Id',
+  }
+];
+
+const privateRoutes = [
+  {
+    key: 'quotes',
+    path: 'quotes',
+    component: Quotes,
+    title: 'Quotes',
+  },
+  {
+    key: 'products',
+    path: 'products',
+    component: Products,
+    title: 'Products',
+  },
+  {
+    key: 'features',
+    path: 'features',
+    component: Features,
+    title: 'Features',
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <h1 className="text-3xl font-bold">Welcome to Vite + React</h1>
-        <button
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          count is {count}
-        </button>
-      </div>
-    </>
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {publicRoutes.map((route) => (
+        <Route
+          key={route.key}
+          path={route.path}
+          element={<route.component />}
+        />
+      ))}
+
+      {privateRoutes.map((route) => (
+        <Route
+          key={route.key}
+          path={route.path}
+          element={
+            <PrivateRoute>
+              <route.component />
+            </PrivateRoute>
+          }
+        />
+      ))}
+    </Routes>
   )
 }
 
