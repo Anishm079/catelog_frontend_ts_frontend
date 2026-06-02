@@ -19,6 +19,7 @@ const Login = () => {
 
     if (success) {
       setUserDetails(user);
+      navigate(location.state?.from || '/quotes');
     }
   }
 

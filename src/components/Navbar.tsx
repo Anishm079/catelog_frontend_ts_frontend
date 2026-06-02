@@ -61,7 +61,7 @@ function ResponsiveAppBar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  if(user.role==="ANALYST"){
+  if(user?.role==="ANALYST"){
     pages = pages.filter(item=>item.label==="Quotes")
   }
 
