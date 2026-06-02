@@ -37,7 +37,9 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   }, [userDetails, navigate])
 
   useEffect(() => {
-    fetchUserDetails();
+    if(!userDetails){
+      fetchUserDetails();
+    }
   }, [])
 
   if (!userDetails) {

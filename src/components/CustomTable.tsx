@@ -7,7 +7,15 @@ import {
   TableCell,
   TableContainer,
   Paper,
+  ThemeProvider,
+  createTheme,
 } from '@mui/material'
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+})
 
 export type Column<T> = {
   id: string
@@ -59,51 +67,53 @@ const CustomTable = <T,>({
   className = '',
 }: CustomTableProps<T>) => {
   return (
-    <TableContainer component={Paper} className={`bg-transparent ${className}`}>
-      <Table size="small" stickyHeader={stickyHeader} className="min-w-full">
-        <TableHead>
-          <TableRow>
-            {columns.map((col) => (
-              <TableCell
-                key={col.id}
-                align={col.align || 'left'}
-                style={{ width: col.width }}
-                className="font-medium text-slate-300 bg-slate-900/50"
-              >
-                {col.label}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {data.length === 0 ? (
+    <ThemeProvider theme={darkTheme}>
+      <TableContainer component={Paper} className={`${className}`}>
+        <Table size="small" stickyHeader={stickyHeader} className="min-w-full">
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={columns.length} className="py-8 text-center text-slate-400">
-                {emptyMessage}
-              </TableCell>
+              {columns.map((col) => (
+                <TableCell
+                  key={col.id}
+                  align={col.align || 'left'}
+                  style={{ width: col.width }}
+                  className="font-medium"
+                >
+                  {col.label}
+                </TableCell>
+              ))}
             </TableRow>
-          ) : (
-            data.map((row, rowIndex) => (
-              <TableRow key={getRowKey(rowKey, row, rowIndex)} hover className="even:bg-slate-950/40">
-                {columns.map((col) => {
-                  const content = col.render(row, rowIndex)
-                  const isClass = typeof col.cellStyle === 'string'
-                  const style = isClass ? undefined : (col.cellStyle as React.CSSProperties | undefined)
-                  const cls = isClass ? (col.cellStyle as string) : ''
+          </TableHead>
 
-                  return (
-                    <TableCell key={col.id} align={col.align || 'left'} style={style} className={`align-top ${cls}`}>
-                      {content}
-                    </TableCell>
-                  )
-                })}
+          <TableBody>
+            {data.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="py-8 text-center">
+                  {emptyMessage}
+                </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ) : (
+              data.map((row, rowIndex) => (
+                <TableRow key={getRowKey(rowKey, row, rowIndex)} hover>
+                  {columns.map((col) => {
+                    const content = col.render(row, rowIndex)
+                    const isClass = typeof col.cellStyle === 'string'
+                    const style = isClass ? undefined : (col.cellStyle as React.CSSProperties | undefined)
+                    const cls = isClass ? (col.cellStyle as string) : ''
+
+                    return (
+                      <TableCell key={col.id} align={col.align || 'left'} style={style} className={`align-top ${cls}`}>
+                        {content}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </ThemeProvider>
   )
 }
 

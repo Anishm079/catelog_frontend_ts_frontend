@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import HeadTypography from "../components/HeadTypography"
 import { useFeaturesState } from "../stores"
-import { getAllFeatures } from "../config";
+import { createFeature, deleteFeature, getAllFeatures, updateFeature } from "../config";
 import CustomTable from "../components/CustomTable";
 import FeatureById from "../components/FeatureById";
+import Loader from "../components/Loader";
 
 const Features = () => {
 
@@ -58,8 +59,25 @@ const Features = () => {
       render: (_row: iFeature) =>{
         return (
           <>
-            <button className="text-blue-500 hover:underline">Edit</button>
-            <button className="text-red-500 hover:underline ml-4">Delete</button>
+            <button 
+              onClick={() => {
+                setEditingFeature(_row);
+                setOpenFeatureDialog(true);
+              }} 
+              className="text-blue-500 hover:underline"
+            >
+              Edit
+            </button>
+            <button 
+              onClick={() => {
+                if(window.confirm('Are you sure you want to delete this feature?')){
+                  handleDeleteFeature(_row._id);
+                }
+              }}
+              className="text-red-500 hover:underline ml-4"
+            >
+              Delete
+            </button>
           </>
         )
       },
@@ -81,13 +99,13 @@ const Features = () => {
     }
   };
 
-  const handleFeatureSubmit = async (data: { name: string; description: string }, id?: string) => {
+  const handleFeatureSubmit = async (data: iFeature, id?: string) => {
     try{
       setLoader(true);
       if(id){
-        // Call update API
+        await updateFeature(id, data);
       }else{
-        // Call create API
+        await createFeature(data);
       }
       fetchFeatures();
     }catch(error){
@@ -96,6 +114,18 @@ const Features = () => {
       setLoader(false);
       setOpenFeatureDialog(false);
       setEditingFeature(null);
+    }
+  }
+
+  const handleDeleteFeature = async (id: string) => {
+    try{
+      setLoader(true);
+      await deleteFeature(id);
+      fetchFeatures();
+    }catch(error){
+      console.error('Error deleting feature:', error);
+    }finally{
+      setLoader(false);
     }
   }
 
@@ -119,7 +149,10 @@ const Features = () => {
           setOpenFeatureDialog(false);
           setEditingFeature(null);
         }} 
-        onSubmit={handleFeatureSubmit} feature={editingFeature} />
+        onSubmit={handleFeatureSubmit} 
+        feature={editingFeature} 
+      />
+      <Loader open={loader} message="Processing..." />
     </div>
   )
 }
